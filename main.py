@@ -29,11 +29,23 @@ def init_connection():
 
 
 def get_course_name(code):
-    browser.open('http://moodle.idc.ac.il/2018/course/view.php?id={}'.format(code))
+    """
+    :param code: Course code (string)
+    :return: Course name (string)
+    """
+    browser.open('http://moodle.idc.ac.il/2018/course/view.php?id={}'
+                 .format(code))
     return browser.select('.page-header-headings')[0].h1.string
 
 
 def add_course_new_info(df, course_name, num_last_items=3):
+    """
+    :param df: Either an empty dataframe or a dataframe containing previous
+               courses information
+    :param course_name: String
+    :param num_last_items: Number of last items from each course
+    :return: Dataframe with num_last_items information
+    """
     browser.open('http://moodle.idc.ac.il/2018/blocks/idc_news/'
                  'full_list.php?courseid={}'.format(
                   courses_dict[course_name]
