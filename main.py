@@ -1,10 +1,13 @@
 import pandas as pd
+from datetime import datetime
 from robobrowser import RoboBrowser
 from tabulate import tabulate
 import my_creds
+from config import determine_semester
 
 preferred_lang = 'en'  # 'en' or 'he'
 current_semester = 'Semester 2'  # 'Semester 1', 'Semester 2' or 'Semester 3'
+# current_semester = determine_semester(datetime.now())
 
 
 def init_connection():
@@ -54,9 +57,9 @@ def add_course_new_info(df, course_name, num_last_items=3):
     :param num_last_items: Number of last items from each course
     :return: Dataframe with num_last_items information
     """
-    browser.open('http://moodle.idc.ac.il/2018/blocks/idc_news/'
+    browser.open('http://moodle.idc.ac.il/{}/blocks/idc_news/'
                  'full_list.php?courseid={}'.format(
-                  courses_dict[course_name]
+                  datetime.now().year, courses_dict[course_name]
                  ))
     course_info = pd.read_html(str(browser.find('table')))[0]\
         .head(num_last_items)
