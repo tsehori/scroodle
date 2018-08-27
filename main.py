@@ -8,11 +8,19 @@ current_semester = 'Semester 2'  # 'Semester 1', 'Semester 2' or 'Semester 3'
 
 
 def init_connection():
+    """Initializes connection with Moodle website and
+       log ins with user credentials"""
     browser.open('https://my.idc.ac.il/')
     login_form = browser.get_form(id='auth_form')
     login_form['username'].value = my_creds.USERNAME
     login_form['password'].value = my_creds.PASSWORD
     browser.submit_form(login_form)
+
+
+def get_courses_codes():
+    """
+    :return: Courses codes for current semester
+    """
     semester_dict = {'Semester 1': '16',
                      'Semester 2': '95',
                      'Semester 3': '134'}
@@ -24,7 +32,7 @@ def init_connection():
     all_courses_links = [url.get('href') for url in
                          [link.find('a') for link in browser.select(
                              ".coc-category-{}".format(
-                          semester_dict[current_semester]))]]
+                                 semester_dict[current_semester]))]]
     return [code.split('=')[1] for code in all_courses_links]
 
 
@@ -66,7 +74,8 @@ def add_course_new_info(df, course_name, num_last_items=3):
 if __name__ == '__main__':
     df = pd.DataFrame()
     browser = RoboBrowser()
-    course_codes = init_connection()
+    init_connection()
+    course_codes = get_courses_codes()
     courses_dict = dict()
 
     for code in course_codes:
