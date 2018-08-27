@@ -1,5 +1,4 @@
 import pandas as pd
-from datetime import datetime
 from robobrowser import RoboBrowser
 from tabulate import tabulate
 import my_creds
@@ -26,46 +25,43 @@ def get_courses_codes(browser):
     :param: browser: RoboBrowser object
     :return: Courses codes for current semester
     """
-
-    browser.open('http://moodle.idc.ac.il/2018/my/index.php?lang={}'
-                 .format(PREFERRED_LANG))
+    browser.open(config.MOODLE_MAIN_PAGE.format(
+        config.CURR_YEAR, PREFERRED_LANG))
     semester_form = browser.get_forms()[1]
     semester_form['coc-category'].value = \
-        config.SEMESTER_DICT['{}'.format(CURRENT_SEMESTER)]
+        config.SEMESTER_DICT[CURRENT_SEMESTER]
     all_courses_links = [url.get('href') for url in
                          [link.find('a') for link in browser.select(
                              ".coc-category-{}".format(
-                                 config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
-    return [code.split('=')[1] for code in all_courses_links]
+                                  config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
+    return [code_in_link.split('=')[1] for code_in_link in all_courses_links]
 
 
-def get_course_name(code):
+def get_course_name(course_code):
     """
-    :param code: Course code (string)
+    :param course_code: Course code (string)
     :return: Course name (string)
     """
-    browser.open('http://moodle.idc.ac.il/2018/course/view.php?id={}'
-                 .format(code))
+    browser.open(config.COURSE_MAIN_PAGE.format(config.CURR_YEAR, course_code))
     return browser.select('.page-header-headings')[0].h1.string
 
 
 def add_course_new_info(main_df, course_name, num_last_items=3):
     """
-    :param main_df: Either an empty dataframe or a dataframe containing previous
-               courses information
+    :param main_df: Either an empty dataframe or a
+           dataframe containing previous courses information
     :param course_name: String
     :param num_last_items: Number of last items from each course
     :return: Dataframe with num_last_items information
     """
-    browser.open('http://moodle.idc.ac.il/{}/blocks/idc_news/'
-                 'full_list.php?courseid={}'.format(
-                  datetime.now().year, courses_dict[course_name]))
+    browser.open(config.COURSE_NEW_ITEMS_PAGE.format(
+                  config.CURR_YEAR, courses_dict[course_name]))
     course_info = pd.read_html(str(browser.find('table')))[0]\
         .head(num_last_items)
     course_info['Course Name'] = course_name
-    course_info['View'] = [item.get('href')
-                           for item in browser.find('table')
-                               .find_all('a')][:num_last_items]
+    course_info['View'] = [a_tag.get('href')
+                           for a_tag in browser.find('table')
+                                .find_all('a')][:num_last_items]
     if len(main_df.index) == 0:  # If the dataframe is empty, initialize it
         main_df = course_info
     else:
@@ -80,15 +76,17 @@ if __name__ == '__main__':
     course_codes = get_courses_codes(browser=browser)
     courses_dict = dict()
 
+    # Each course has its own unique code
     for code in course_codes:
         courses_dict['{}'.format(get_course_name(code))] = code
 
+    # For each such course, we add its new information to the dataframe
     for course in courses_dict:
         df = add_course_new_info(df, course)
 
     # Sorting the dataframe by date
     df['Time'] = pd.to_datetime(df['Time']).apply(
-        lambda x: x.strftime('%d/%m/%Y'))
+        lambda date_index: date_index.strftime('%d/%m/%Y'))
     df['Time'] = pd.to_datetime(df['Time'])
     df.sort_values(by='Time', ascending=False, inplace=True)
 
