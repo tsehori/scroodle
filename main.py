@@ -1,22 +1,25 @@
 import pandas as pd
 from robobrowser import RoboBrowser
 from tabulate import tabulate
-import my_creds
+import getpass
+import configparser
 import config
 
-PREFERRED_LANG = 'en'  # 'en' or 'he'
+PREFERRED_LANG = 'en'            # 'en' or 'he'
 CURRENT_SEMESTER = 'Semester 2'  # 'Semester 1', 'Semester 2' or 'Semester 3'
 
 
-def init_connection(browser):
+def init_connection(browser, username, password):
     """Initializes connection with Moodle website and
        log ins with user credentials
     :param: browser: RoboBrowser object
+    :param username: The user's given username
+    :param password: The user's given password
     """
     browser.open(config.MY_IDC_HOME)
     login_form = browser.get_form(id='auth_form')
-    login_form['username'].value = my_creds.USERNAME
-    login_form['password'].value = my_creds.PASSWORD
+    login_form['username'].value = username
+    login_form['password'].value = password
     browser.submit_form(login_form)
 
 
@@ -70,9 +73,32 @@ def add_course_new_info(main_df, course_name, num_last_items=3):
 
 
 if __name__ == '__main__':
+    creds_parser = configparser.ConfigParser()
+    first_time_flag = False
+    # Get username, either from file or input
+    if creds_parser.read('my_creds.ini') == []:
+        username = input('Type username (usually in the format firstname.lastname): ')
+        first_time_flag = True
+    else:
+        username = creds_parser['CREDENTIALS']['USERNAME']
+
+    # Get user's password
+    user_password = getpass.getpass('Password for {}: '.format(username))
+
+    # If the username wasn't in file, suggest it
+    if first_time_flag:
+        save_flag = input('Should we save your username for next time?\n'
+                          '(No option to save password!) y\\n: ') == 'y'
+        if save_flag:
+            print('Your username is being saved in file my_creds.ini.')
+            creds_parser['CREDENTIALS'] = {}
+            creds_parser['CREDENTIALS']['USERNAME'] = username
+            with open('my_creds.ini', 'w') as creds_file:
+                creds_parser.write(creds_file)
+
     df = pd.DataFrame()
     browser = RoboBrowser(parser='html.parser')
-    init_connection(browser=browser)
+    init_connection(browser=browser, username=username, password=user_password)
     course_codes = get_courses_codes(browser=browser)
     courses_dict = dict()
 
