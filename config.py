@@ -2,9 +2,9 @@ from datetime import datetime
 
 CURR_YEAR = datetime.now().year
 
-SEMESTER_DICT = {'Semester 1': '16',
-                 'Semester 2': '95',
-                 'Semester 3': '134'}
+SEMESTER_DICT = {'1': '16',   # Semester 1
+                 '2': '95',   # Semester 2
+                 '3': '134'}  # Semester 3
 
 MY_IDC_HOME = 'https://my.idc.ac.il/'
 

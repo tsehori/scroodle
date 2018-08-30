@@ -5,9 +5,6 @@ import getpass
 import configparser
 import config
 
-PREFERRED_LANG = 'en'            # 'en' or 'he'
-CURRENT_SEMESTER = 'Semester 2'  # 'Semester 1', 'Semester 2' or 'Semester 3'
-
 
 def init_connection(browser, username, password):
     """Initializes connection with Moodle website and
@@ -72,29 +69,56 @@ def add_course_new_info(main_df, course_name, num_last_items=3):
     return main_df
 
 
+def ask_for_username(creds_parser):
+    """
+    :param creds_parser: Configparser object from main program
+    :return: Returns the username as entered by user and the possibly-
+             modified configparser object
+    """
+    username = input('Type username (usually in the format firstname.lastname): ')
+    save_flag = input('Should we save your username for next time? y\\n: ') == 'y'
+    if save_flag:
+        print('Your username is being saved in file my_creds.ini.')
+        creds_parser['CREDENTIALS'] = {}
+        creds_parser['CREDENTIALS']['USERNAME'] = username
+    return username, creds_parser
+
+
 if __name__ == '__main__':
     creds_parser = configparser.ConfigParser()
     first_time_flag = False
-    # Get username, either from file or input
+
+    # If the file is empty, it is th first use!
     if creds_parser.read('my_creds.ini') == []:
-        username = input('Type username (usually in the format firstname.lastname): ')
         first_time_flag = True
+        creds_parser['PREFERENCES'] = {}
+        creds_parser['PREFERENCES']['LANGUAGE'] = input('What is your preferred language? he\\en: ')
+        creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = input('What is the current semester? 1\\2\\3: ')
+        print('Preferred language and current semester are saved in my_creds.ini.')
+        username, creds_parser = ask_for_username(creds_parser=creds_parser)
+
+    # If 'CREDENTIALS' section is not in file, then the user asked the program
+    # to not save his username last time
+    elif 'CREDENTIALS' not in creds_parser:
+        username, creds_parser = ask_for_username(creds_parser=creds_parser)
+
+    # Get username, either from file or input
     else:
         username = creds_parser['CREDENTIALS']['USERNAME']
+
+    global CURRENT_SEMESTER, PREFERRED_LANG
+    CURRENT_SEMESTER = creds_parser['PREFERENCES']['CURRENT_SEMESTER']
+    PREFERRED_LANG = creds_parser['PREFERENCES']['LANGUAGE']
 
     # Get user's password
     user_password = getpass.getpass('Password for {}: '.format(username))
 
+    print('Working!')
+
     # If the username wasn't in file, suggest it
-    if first_time_flag:
-        save_flag = input('Should we save your username for next time?\n'
-                          '(No option to save password!) y\\n: ') == 'y'
-        if save_flag:
-            print('Your username is being saved in file my_creds.ini.')
-            creds_parser['CREDENTIALS'] = {}
-            creds_parser['CREDENTIALS']['USERNAME'] = username
-            with open('my_creds.ini', 'w') as creds_file:
-                creds_parser.write(creds_file)
+    # if first_time_flag:
+    with open('my_creds.ini', 'w') as creds_file:
+        creds_parser.write(creds_file)
 
     df = pd.DataFrame()
     browser = RoboBrowser(parser='html.parser')
