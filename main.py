@@ -5,10 +5,14 @@ import getpass
 import configparser
 import config
 
+# Both are initialized in main, after reading\writing my_creds.ini
+CURRENT_SEMESTER = None
+PREFERRED_LANG = None
+
 
 def init_connection(browser, username, password):
     """Initializes connection with Moodle website and
-       log ins with user credentials
+       log ins with given user credentials
     :param: browser: RoboBrowser object
     :param username: The user's given username
     :param password: The user's given password
@@ -106,7 +110,6 @@ if __name__ == '__main__':
     else:
         username = creds_parser['CREDENTIALS']['USERNAME']
 
-    global CURRENT_SEMESTER, PREFERRED_LANG
     CURRENT_SEMESTER = creds_parser['PREFERENCES']['CURRENT_SEMESTER']
     PREFERRED_LANG = creds_parser['PREFERENCES']['LANGUAGE']
 
