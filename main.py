@@ -88,6 +88,18 @@ def ask_for_username(creds_parser):
     return username, creds_parser
 
 
+def download_requested_items(links_series, num_requested):
+    """
+    :param links_series: Pandas series of just the links
+    :param num_requested: How many links requested
+    """
+
+    # links_series.iteritems() returns a zip object of (index, link). This
+    #  is casted to a list, so we can used list slicing.
+    for index, row in list(links_series.iteritems())[:num_requested]:
+        pass
+
+
 if __name__ == '__main__':
     creds_parser = configparser.ConfigParser()
     first_time_flag = False
@@ -148,4 +160,14 @@ if __name__ == '__main__':
                      'Action', 'View']
     df = df[new_col_order]
     df.set_index(['Time'], inplace=True)
+
     print(tabulate(df, headers='keys', tablefmt='psql'))
+
+    # TODO complete
+    # if input('Should we view the latest updates online? y\\n: ') == 'y':
+    #
+    #     # Has to be casted to integer, to be parsed in download_requested_items
+    #     # as slicing index
+    #     num_requested = int(input('How many to view? (from the newest) 1\\2\\3... :\n'
+    #                           'Note that some will be downloaded! '))
+    #     download_requested_items(links_series=df['View'], num_requested=num_requested)
