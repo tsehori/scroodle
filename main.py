@@ -1,5 +1,6 @@
 import pandas as pd
 from robobrowser import RoboBrowser
+import webbrowser
 from tabulate import tabulate
 import getpass
 import configparser
@@ -97,7 +98,7 @@ def download_requested_items(links_series, num_requested):
     # links_series.iteritems() returns a zip object of (index, link). This
     #  is casted to a list, so we can used list slicing.
     for index, row in list(links_series.iteritems())[:num_requested]:
-        pass
+        webbrowser.open(row)
 
 
 if __name__ == '__main__':
@@ -160,14 +161,12 @@ if __name__ == '__main__':
                      'Action', 'View']
     df = df[new_col_order]
     df.set_index(['Time'], inplace=True)
-
     print(tabulate(df, headers='keys', tablefmt='psql'))
 
-    # TODO complete
-    # if input('Should we view the latest updates online? y\\n: ') == 'y':
-    #
-    #     # Has to be casted to integer, to be parsed in download_requested_items
-    #     # as slicing index
-    #     num_requested = int(input('How many to view? (from the newest) 1\\2\\3... :\n'
-    #                           'Note that some will be downloaded! '))
-    #     download_requested_items(links_series=df['View'], num_requested=num_requested)
+    if input('Should we view the latest updates online? y\\n: ') == 'y':
+
+        # Has to be casted to integer, to be parsed in download_requested_items
+        # as slicing index
+        num_requested = int(input('How many to view? (from the newest) 1\\2\\3... :\n'
+                              'Note that some will be downloaded!'))
+        download_requested_items(links_series=df['View'], num_requested=num_requested)
