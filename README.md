@@ -30,3 +30,10 @@ To use the program, make sure that your current directory in the command line is
 python main.py
 ```
 And just follow the program's instructions!
+
+## A new file named my_crdeds.ini was created! Help!!
+Not to worry; this file saves your preferences, such as desired language and semester, and your username, shall you want it. In the next time the program runs, it won't have to ask for these details.
+In case you don't want these detailes to be saved -- just delete the file. :innocent:
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
