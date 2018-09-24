@@ -13,7 +13,16 @@ No more! :books:
 What's worse than spending your Friday morning scrolling through Moodle?
 
 ## How to install it?
-The first two steps are first-time only!
+
+Do you like [PyPi](https://pypi.org/)? I've got some good news for you! You can use the package easily using the following command:
+```sh
+pip install scroodle
+```
+That is, assuming you have [pip](https://pypi.org/project/pip/) already installed on your machine.
+You can check out the project's page on PyPi [here](https://pypi.org/project/scroodle/).
+
+You may also install the package in a different way;
+Note that in this case, the first two steps are first-time only!
 
 Clone the git repository to your local machine.
 ```sh

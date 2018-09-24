@@ -1,3 +1,5 @@
 .idea/
 __pycache__/
 scroodle\my_creds.ini
+scroodle.egg-info
+dist
