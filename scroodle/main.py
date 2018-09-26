@@ -3,8 +3,9 @@ from robobrowser import RoboBrowser
 import webbrowser
 from tabulate import tabulate
 import getpass
+from pyfiglet import Figlet
 import configparser
-import config
+import scroodle.config as config
 
 # Both are initialized in main, after reading\writing my_creds.ini
 CURRENT_SEMESTER = None
@@ -101,72 +102,84 @@ def download_requested_items(links_series, num_requested):
         webbrowser.open(row)
 
 
+def main():
+    try:
+        f = Figlet()
+        welcome_message = f.renderText('scroodle')
+        print(welcome_message + "\nIf you wish to"
+                                " exit the program, hit Ctrl+c")
+
+        creds_parser = configparser.ConfigParser()
+        first_time_flag = False
+
+        # If the file is empty, it is th first use!
+        if creds_parser.read('my_creds.ini') == []:
+            first_time_flag = True
+            creds_parser['PREFERENCES'] = {}
+            creds_parser['PREFERENCES']['LANGUAGE'] = input('What is your preferred language? he\\en: ')
+            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = input('What is the current semester? 1\\2\\3: ')
+            print('Preferred language and current semester are saved in my_creds.ini.')
+            username, creds_parser = ask_for_username(creds_parser=creds_parser)
+
+        # If 'CREDENTIALS' section is not in file, then the user asked the program
+        # to not save his username last time
+        elif 'CREDENTIALS' not in creds_parser:
+            username, creds_parser = ask_for_username(creds_parser=creds_parser)
+
+        # Get username, either from file or input
+        else:
+            username = creds_parser['CREDENTIALS']['USERNAME']
+
+        CURRENT_SEMESTER = creds_parser['PREFERENCES']['CURRENT_SEMESTER']
+        PREFERRED_LANG = creds_parser['PREFERENCES']['LANGUAGE']
+
+        # Get user's password
+        user_password = getpass.getpass('Password for {}: '.format(username))
+
+        print('Working!')
+
+        # If the username wasn't in file, suggest it
+        # if first_time_flag:
+        with open('my_creds.ini', 'w') as creds_file:
+            creds_parser.write(creds_file)
+
+        df = pd.DataFrame()
+        browser = RoboBrowser(parser='html.parser')
+        init_connection(browser=browser, username=username, password=user_password)
+        course_codes = get_courses_codes(browser=browser)
+        courses_dict = dict()
+
+        # Each course has its own unique code
+        for code in course_codes:
+            courses_dict['{}'.format(get_course_name(code))] = code
+
+        # For each such course, we add its new information to the dataframe
+        for course in courses_dict:
+            df = add_course_new_info(df, course)
+
+        # Sorting the dataframe by date
+        df['Time'] = pd.to_datetime(df['Time']).apply(
+            lambda date_index: date_index.strftime('%d/%m/%Y'))
+        df['Time'] = pd.to_datetime(df['Time'])
+        df.sort_values(by='Time', ascending=False, inplace=True)
+
+        # Reordering the dataframe
+        new_col_order = ['Time', 'Course Name', 'Text', 'Activity',
+                         'Action', 'View']
+        df = df[new_col_order]
+        df.set_index(['Time'], inplace=True)
+        print(tabulate(df, headers='keys', tablefmt='psql'))
+
+        if input('Should we view the latest updates online? y\\n: ') == 'y':
+
+            # Has to be casted to integer, to be parsed in download_requested_items
+            # as slicing index
+            num_requested = int(input('How many to view? (from the newest) 1\\2\\3... :\n'
+                                      'Note that some will be downloaded!'))
+            download_requested_items(links_series=df['View'], num_requested=num_requested)
+    except KeyboardInterrupt:
+        pass
+
+
 if __name__ == '__main__':
-    creds_parser = configparser.ConfigParser()
-    first_time_flag = False
-
-    # If the file is empty, it is th first use!
-    if creds_parser.read('my_creds.ini') == []:
-        first_time_flag = True
-        creds_parser['PREFERENCES'] = {}
-        creds_parser['PREFERENCES']['LANGUAGE'] = input('What is your preferred language? he\\en: ')
-        creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = input('What is the current semester? 1\\2\\3: ')
-        print('Preferred language and current semester are saved in my_creds.ini.')
-        username, creds_parser = ask_for_username(creds_parser=creds_parser)
-
-    # If 'CREDENTIALS' section is not in file, then the user asked the program
-    # to not save his username last time
-    elif 'CREDENTIALS' not in creds_parser:
-        username, creds_parser = ask_for_username(creds_parser=creds_parser)
-
-    # Get username, either from file or input
-    else:
-        username = creds_parser['CREDENTIALS']['USERNAME']
-
-    CURRENT_SEMESTER = creds_parser['PREFERENCES']['CURRENT_SEMESTER']
-    PREFERRED_LANG = creds_parser['PREFERENCES']['LANGUAGE']
-
-    # Get user's password
-    user_password = getpass.getpass('Password for {}: '.format(username))
-
-    print('Working!')
-
-    # If the username wasn't in file, suggest it
-    # if first_time_flag:
-    with open('my_creds.ini', 'w') as creds_file:
-        creds_parser.write(creds_file)
-
-    df = pd.DataFrame()
-    browser = RoboBrowser(parser='html.parser')
-    init_connection(browser=browser, username=username, password=user_password)
-    course_codes = get_courses_codes(browser=browser)
-    courses_dict = dict()
-
-    # Each course has its own unique code
-    for code in course_codes:
-        courses_dict['{}'.format(get_course_name(code))] = code
-
-    # For each such course, we add its new information to the dataframe
-    for course in courses_dict:
-        df = add_course_new_info(df, course)
-
-    # Sorting the dataframe by date
-    df['Time'] = pd.to_datetime(df['Time']).apply(
-        lambda date_index: date_index.strftime('%d/%m/%Y'))
-    df['Time'] = pd.to_datetime(df['Time'])
-    df.sort_values(by='Time', ascending=False, inplace=True)
-
-    # Reordering the dataframe
-    new_col_order = ['Time', 'Course Name', 'Text', 'Activity',
-                     'Action', 'View']
-    df = df[new_col_order]
-    df.set_index(['Time'], inplace=True)
-    print(tabulate(df, headers='keys', tablefmt='psql'))
-
-    if input('Should we view the latest updates online? y\\n: ') == 'y':
-
-        # Has to be casted to integer, to be parsed in download_requested_items
-        # as slicing index
-        num_requested = int(input('How many to view? (from the newest) 1\\2\\3... :\n'
-                              'Note that some will be downloaded!'))
-        download_requested_items(links_series=df['View'], num_requested=num_requested)
+    main()

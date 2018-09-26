@@ -12,6 +12,6 @@ setup(
     author='Tsehori',
     author_email='g.tsehori@gmail.com',
     packages=['scroodle'],
-    install_requires=['tabulate', 'robobrowser', 'pandas']
+    install_requires=['tabulate', 'robobrowser', 'pandas', 'pyfiglet']
 )
 
