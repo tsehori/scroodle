@@ -43,7 +43,7 @@ def get_courses_codes(browser):
     return [code_in_link.split('=')[1] for code_in_link in all_courses_links]
 
 
-def get_course_name(course_code):
+def get_course_name(browser, course_code):
     """
     :param course_code: Course code (string)
     :return: Course name (string)
@@ -52,7 +52,7 @@ def get_course_name(course_code):
     return browser.select('.page-header-headings')[0].h1.string
 
 
-def add_course_new_info(main_df, course_name, num_last_items=3):
+def add_course_new_info(browser, main_df, course_name, courses_dict, num_last_items=3):
     """
     :param main_df: Either an empty dataframe or a
            dataframe containing previous courses information
@@ -130,6 +130,8 @@ def main():
         else:
             username = creds_parser['CREDENTIALS']['USERNAME']
 
+        global CURRENT_SEMESTER
+        global PREFERRED_LANG
         CURRENT_SEMESTER = creds_parser['PREFERENCES']['CURRENT_SEMESTER']
         PREFERRED_LANG = creds_parser['PREFERENCES']['LANGUAGE']
 
@@ -151,11 +153,11 @@ def main():
 
         # Each course has its own unique code
         for code in course_codes:
-            courses_dict['{}'.format(get_course_name(code))] = code
+            courses_dict['{}'.format(get_course_name(browser, code))] = code
 
         # For each such course, we add its new information to the dataframe
         for course in courses_dict:
-            df = add_course_new_info(df, course)
+            df = add_course_new_info(browser, df, course, courses_dict)
 
         # Sorting the dataframe by date
         df['Time'] = pd.to_datetime(df['Time']).apply(
