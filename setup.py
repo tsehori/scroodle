@@ -14,4 +14,3 @@ setup(
     packages=['scroodle'],
     install_requires=['tabulate', 'robobrowser', 'pandas', 'pyfiglet']
 )
-

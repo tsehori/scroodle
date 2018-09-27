@@ -2,3 +2,4 @@ tabulate==0.8.2
 robobrowser==0.5.3
 pandas==0.22.0
 pyfiglet==0.7.5
+lxml==4.2.5
