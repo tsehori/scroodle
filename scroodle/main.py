@@ -102,6 +102,21 @@ def download_requested_items(links_series, num_requested):
         webbrowser.open(row)
 
 
+def check_legal_input(user_input, input_type):
+    """
+    :param user_input: Self explanatory
+    :param input_type: Either 'lang' for language, 'semester' etc
+    :return: The user input is returned as is
+    """
+    legal_dict = {
+        'lang': ['he', 'en'],
+        'semester': [1, 2, 3]
+    }
+    if user_input not in legal_dict[input_type]:
+        exit('Illegal input!')
+    return user_input
+
+
 def main():
     try:
         f = Figlet()
@@ -116,8 +131,10 @@ def main():
         if creds_parser.read('my_creds.ini') == []:
             first_time_flag = True
             creds_parser['PREFERENCES'] = {}
-            creds_parser['PREFERENCES']['LANGUAGE'] = input('What is your preferred language? he\\en: ')
-            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = input('What is the current semester? 1\\2\\3: ')
+            creds_parser['PREFERENCES']['LANGUAGE'] = check_legal_input(
+                    input('What is your preferred language? he\\en: '), 'lang')
+            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
+                input('What is the current semester? 1\\2\\3: '), 'semester')
             print('Preferred language and current semester are saved in my_creds.ini.')
             username, creds_parser = ask_for_username(creds_parser=creds_parser)
 
