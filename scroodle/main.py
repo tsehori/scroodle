@@ -110,7 +110,7 @@ def check_legal_input(user_input, input_type):
     """
     legal_dict = {
         'lang': ['he', 'en'],
-        'semester': [1, 2, 3]
+        'semester': [str(num) for num in range(1, 4)]
     }
     if user_input not in legal_dict[input_type]:
         exit('Illegal input!')
@@ -127,12 +127,12 @@ def main():
         creds_parser = configparser.ConfigParser()
         first_time_flag = False
 
-        # If the file is empty, it is th first use!
+        # If the file is empty, it is the first use!
         if creds_parser.read('my_creds.ini') == []:
             first_time_flag = True
             creds_parser['PREFERENCES'] = {}
             creds_parser['PREFERENCES']['LANGUAGE'] = check_legal_input(
-                    input('What is your preferred language? he\\en: '), 'lang')
+                input('What is your preferred language? he\\en: '), 'lang')
             creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
                 input('What is the current semester? 1\\2\\3: '), 'semester')
             print('Preferred language and current semester are saved in my_creds.ini.')
