@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime as dt
 
-CURR_YEAR = datetime.now().year
+CURR_YEAR = dt.today().year if dt.today().month < 10 \
+    else dt.today().year + 1
 
 SEMESTER_DICT = {'1': '16',   # Semester 1
                  '2': '95',   # Semester 2

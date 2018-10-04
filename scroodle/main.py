@@ -5,7 +5,7 @@ from tabulate import tabulate
 import getpass
 from pyfiglet import Figlet
 import configparser
-import scroodle.config as config
+import config
 
 # Both are initialized in main, after reading\writing my_creds.ini
 CURRENT_SEMESTER = None
@@ -33,9 +33,12 @@ def get_courses_codes(browser):
     """
     browser.open(config.MOODLE_MAIN_PAGE.format(
         config.CURR_YEAR, PREFERRED_LANG))
-    semester_form = browser.get_forms()[1]
-    semester_form['coc-category'].value = \
-        config.SEMESTER_DICT[CURRENT_SEMESTER]
+    print(browser.get_forms())  # todo delete
+    semester_form = browser.get_forms()[0]  # used to be [1] (in 2018)
+
+    # The following doesn't work in 2019; it is no longer a form!
+    # semester_form['coc-category'].value = \
+    #     config.SEMESTER_DICT[CURRENT_SEMESTER]
     all_courses_links = [url.get('href') for url in
                          [link.find('a') for link in browser.select(
                              ".coc-category-{}".format(
