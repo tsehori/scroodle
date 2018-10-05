@@ -33,16 +33,24 @@ def get_courses_codes(browser):
     """
     browser.open(config.MOODLE_MAIN_PAGE.format(
         config.CURR_YEAR, PREFERRED_LANG))
-    print(browser.get_forms())  # todo delete
-    semester_form = browser.get_forms()[0]  # used to be [1] (in 2018)
 
-    # The following doesn't work in 2019; it is no longer a form!
-    # semester_form['coc-category'].value = \
-    #     config.SEMESTER_DICT[CURRENT_SEMESTER]
+    if config.CURR_YEAR < 2018:
+        semester_form = browser.get_forms()[1]
+
+        # The following doesn't work in 2019; it is no longer a form!
+        semester_form['coc-category'].value = \
+            config.SEMESTER_DICT[CURRENT_SEMESTER]
+        all_courses_links = [url.get('href') for url in
+                             [link.find('a') for link in browser.select(
+                                 ".coc-category-{}".format(
+                                      config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
+        return [code_in_link.split('=')[1] for code_in_link in all_courses_links]
+
+    # At the moment, the Moodle page for 2019 apparently has no option
+    # to choose a semester. This will be reviewed when second semester starts.
     all_courses_links = [url.get('href') for url in
                          [link.find('a') for link in browser.select(
-                             ".coc-category-{}".format(
-                                  config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
+                          "h3") if link.find('a') is not None]]
     return [code_in_link.split('=')[1] for code_in_link in all_courses_links]
 
 
