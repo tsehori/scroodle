@@ -48,7 +48,10 @@ In case you don't want these detailes to be saved -- just delete the file. :inno
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
 
 ## Technical overview
-In this section, I will try to brifely address the code's in-and-out.
+Throughout structuring and developing *scroodle*, I have run into some challenges. This is one of my first medium-sized Python project, in which I tried to implement best practices and 'Pythonic' code; using diverse Python libraries (both from the standard library and 3rd party), using virtualenv to create an isolated Python environment, that allowed me to work on scroodle independent from other projects and repositories, etc.
+
+Moreover, during the project, I incorporated some of Git's main functionalities: initializing the git repository and pushing it remotely into GitHub, adding relevant parts to each commit, documenting all commits explicitly, branching, pull requesting, etc.
+
 - We start by initializing a [ConfigParser](https://docs.python.org/3/library/configparser.html) for my_creds.ini, and we try reading it.
 If this file doesn't exist, we create it and ask the user for his desired language and current semester. Those are saved automatically in my_creds.ini.
 - The user is asked for a username. It can be either saved or not saved in my_creds.ini; it's up to the user.
