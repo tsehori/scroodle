@@ -37,14 +37,16 @@ def get_courses_codes(browser):
     if config.CURR_YEAR < 2018:
         semester_form = browser.get_forms()[1]
 
-        # The following doesn't work in 2019; it is no longer a form!
+        # The following has to be re-checked for 2019; once assignments
+        # will be handed, it will be possible to check.
         semester_form['coc-category'].value = \
             config.SEMESTER_DICT[CURRENT_SEMESTER]
         all_courses_links = [url.get('href') for url in
                              [link.find('a') for link in browser.select(
                                  ".coc-category-{}".format(
                                       config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
-        return [code_in_link.split('=')[1] for code_in_link in all_courses_links]
+        return [code_in_link.split('=')[1]
+                for code_in_link in all_courses_links]
 
     # At the moment, the Moodle page for 2019 apparently has no option
     # to choose a semester. This will be reviewed when second semester starts.
@@ -63,7 +65,8 @@ def get_course_name(browser, course_code):
     return browser.select('.page-header-headings')[0].h1.string
 
 
-def add_course_new_info(browser, main_df, course_name, courses_dict, num_last_items=3):
+def add_course_new_info(browser, main_df, course_name, courses_dict,
+                        num_last_items=3):
     """
     :param main_df: Either an empty dataframe or a
            dataframe containing previous courses information
@@ -73,7 +76,7 @@ def add_course_new_info(browser, main_df, course_name, courses_dict, num_last_it
     """
     browser.open(config.COURSE_NEW_ITEMS_PAGE.format(
                   config.CURR_YEAR, courses_dict[course_name]))
-    course_info = pd.read_html(str(browser.find('table')))[0]\
+    course_info = pd.read_html(str(browser.find('table')))[0] \
         .head(num_last_items)
     course_info['Course Name'] = course_name
     course_info['View'] = [a_tag.get('href')
@@ -92,8 +95,10 @@ def ask_for_username(creds_parser):
     :return: Returns the username as entered by user and the possibly-
              modified configparser object
     """
-    username = input('Type username (usually in the format firstname.lastname): ')
-    save_flag = input('Should we save your username for next time? y\\n: ') == 'y'
+    username = input('Type username (usually in the'
+                     ' format firstname.lastname): ')
+    save_flag = input('Should we save your '
+                      'username for next time? y\\n: ') == 'y'
     if save_flag:
         print('Your username is being saved in file my_creds.ini.')
         creds_parser['CREDENTIALS'] = {}
@@ -146,11 +151,12 @@ def main():
                 input('What is your preferred language? he\\en: '), 'lang')
             creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
                 input('What is the current semester? 1\\2\\3: '), 'semester')
-            print('Preferred language and current semester are saved in my_creds.ini.')
+            print('Preferred language and current semester'
+                  ' are saved in my_creds.ini.')
             username, creds_parser = ask_for_username(creds_parser=creds_parser)
 
-        # If 'CREDENTIALS' section is not in file, then the user asked the program
-        # to not save his username last time
+        # If 'CREDENTIALS' section is not in file, then the user asked
+        #  the program to not save his username last time
         elif 'CREDENTIALS' not in creds_parser:
             username, creds_parser = ask_for_username(creds_parser=creds_parser)
 
@@ -175,7 +181,8 @@ def main():
 
         df = pd.DataFrame()
         browser = RoboBrowser(parser='html.parser')
-        init_connection(browser=browser, username=username, password=user_password)
+        init_connection(browser=browser, username=username,
+                        password=user_password)
         course_codes = get_courses_codes(browser=browser)
         courses_dict = dict()
 
@@ -202,11 +209,13 @@ def main():
 
         if input('Should we view the latest updates online? y\\n: ') == 'y':
 
-            # Has to be casted to integer, to be parsed in download_requested_items
-            # as slicing index
-            num_requested = int(input('How many to view? (from the newest) 1\\2\\3... :\n'
+            # Has to be casted to integer, to be parsed
+            # in download_requested_items as slicing index
+            num_requested = int(input('How many to view? '
+                                      '(from the newest) 1\\2\\3... :\n'
                                       'Note that some will be downloaded!'))
-            download_requested_items(links_series=df['View'], num_requested=num_requested)
+            download_requested_items(links_series=df['View'],
+                                     num_requested=num_requested)
     except KeyboardInterrupt:
         pass
 
