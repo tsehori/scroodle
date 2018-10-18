@@ -149,8 +149,12 @@ def main():
             creds_parser['PREFERENCES'] = {}
             creds_parser['PREFERENCES']['LANGUAGE'] = check_legal_input(
                 input('What is your preferred language? he\\en: '), 'lang')
-            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
-                input('What is the current semester? 1\\2\\3: '), 'semester')
+
+            # creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
+            #     input('What is the current semester? 1\\2\\3: '), 'semester')
+            # There is only one semester in 2019 at the moment. Will be changed
+            # by second semester.
+            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = 1
             print('Preferred language and current semester'
                   ' are saved in my_creds.ini.')
             username, creds_parser = ask_for_username(creds_parser=creds_parser)
