@@ -154,6 +154,9 @@ def main():
             creds_parser['PREFERENCES'] = {}
             creds_parser['PREFERENCES']['LANGUAGE'] = check_legal_input(
                 input('What is your preferred language? he\\en: '), 'lang')
+            creds_parser['PREFERENCES']['URLS'] = check_legal_input(
+                input('Do you want to display a full URL address for each '
+                      'item? y\\n: '), 'urls')
 
             # creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
             #     input('What is the current semester? 1\\2\\3: '), 'semester')
