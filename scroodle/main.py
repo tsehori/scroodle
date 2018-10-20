@@ -161,10 +161,12 @@ def main():
             # creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
             #     input('What is the current semester? 1\\2\\3: '), 'semester')
             # There is only one semester in 2019 at the moment. Will be changed
-            # by second semester.
-            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = 1
-            print('Preferred language and current semester'
-                  ' are saved in my_creds.ini.')
+            # by second semester, as there is no solid way to change semesters
+            # at the moment.
+            creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = str(1)
+
+            print('Preferred language, current semester (first semester) and '
+                  'URL settings are saved in my_creds.ini.')
             username, creds_parser = ask_for_username(creds_parser=creds_parser)
 
         # If 'CREDENTIALS' section is not in file, then the user asked
