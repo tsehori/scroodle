@@ -15,5 +15,5 @@ MOODLE_MAIN_PAGE = 'http://moodle.idc.ac.il/{}/my/' \
 COURSE_MAIN_PAGE = 'http://moodle.idc.ac.il/{}/course/' \
                    'view.php?id={}'  # Year, Course code
 
-COURSE_NEW_ITEMS_PAGE = 'http://moodle.idc.ac.il/{}/blocks/idc_news/' \
-                        'full_list.php?courseid={}'  # Course code
+COURSE_NEW_ITEMS_PAGE = 'http://moodle.idc.ac.il/{}/blocks/' \
+                        'idc_news/full_list.php?courseid={}'

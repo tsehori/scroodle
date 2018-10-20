@@ -76,8 +76,11 @@ def add_course_new_info(browser, main_df, course_name, courses_dict,
     """
     browser.open(config.COURSE_NEW_ITEMS_PAGE.format(
                   config.CURR_YEAR, courses_dict[course_name]))
-    course_info = pd.read_html(str(browser.find('table')))[0] \
-        .head(num_last_items)
+    try:
+        course_info = pd.read_html(str(browser.find('table')))[0] \
+            .head(num_last_items)
+    except ValueError:
+        return pd.DataFrame()
     course_info['Course Name'] = course_name
     course_info['View'] = [a_tag.get('href')
                            for a_tag in browser.find('table')
