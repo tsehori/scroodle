@@ -10,6 +10,7 @@ import config
 # Both are initialized in main, after reading\writing my_creds.ini
 CURRENT_SEMESTER = None
 PREFERRED_LANG = None
+PREFERRED_DISPLAY_FULL_URLS = None
 
 
 def init_connection(browser, username, password):
@@ -129,7 +130,8 @@ def check_legal_input(user_input, input_type):
     """
     legal_dict = {
         'lang': ['he', 'en'],
-        'semester': [str(num) for num in range(1, 4)]
+        'semester': [str(num) for num in range(1, 4)],
+        'urls': ['y', 'n']
     }
     if user_input not in legal_dict[input_type]:
         exit('Illegal input!')
@@ -173,8 +175,10 @@ def main():
 
         global CURRENT_SEMESTER
         global PREFERRED_LANG
+        global PREFERRED_DISPLAY_FULL_URLS
         CURRENT_SEMESTER = creds_parser['PREFERENCES']['CURRENT_SEMESTER']
         PREFERRED_LANG = creds_parser['PREFERENCES']['LANGUAGE']
+        PREFERRED_DISPLAY_FULL_URLS = creds_parser['PREFERENCES']['URLS']
 
         # Get user's password
         user_password = getpass.getpass('Password for {}: '.format(username))
@@ -212,6 +216,8 @@ def main():
                          'Action', 'View']
         df = df[new_col_order]
         df.set_index(['Time'], inplace=True)
+        if PREFERRED_DISPLAY_FULL_URLS == 'y':
+            df.drop(['View'], axis=1, inplace=True)
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
         if input('Should we view the latest updates online? y\\n: ') == 'y':
