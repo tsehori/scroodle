@@ -7,12 +7,21 @@ Do you find yourself browsing [IDC Moodle](http://moodle.idc.ac.il/2018/my/index
 
 No more! :books: 
 
-## What is it?
+## Table of contents
+ - [Introduction](#introduction)
+ - [Installation](#installation)
+ - [Usage](#usage)
+ - [Techy details](#techy-details)
+ - [A new file named my_creds.ini was created! Help!!](#a-new-file-named-my_creds.ini-was-created!-Help!!)
+ - [License](#license)
+ - [Feedback](#feedback)
+
+## Introduction
 
 **scroodle** is a small, easy-to-use Python program that does the 'hard job' for you, so you don't have to! Insert your Moodle username and password, and get all the recent homeworks, announcments and resources from *your* current semester's courses in no time!
 What's worse than spending your Friday morning scrolling through Moodle?
 
-## How to install it?
+## Installation
 
 Do you like [PyPi](https://pypi.org/)? I've got some good news for you! You can use the package easily using the following command:
 ```sh
@@ -39,6 +48,15 @@ To use the program, make sure that your current directory in the command line is
 python main.py
 ```
 And just follow the program's instructions!
+
+## Usage
+After installing scroodle (as described [above](#installation)), go to the folder \scroodle\scroodle, wherever you've downloaded it. *scroodle* doesn't have any system arguments (no [argparser](https://docs.python.org/3/library/argparse.html) integrated in scroodle); you just run `python main.py` (or `python3 main.py`), and scroodle will tell you what to do next!
+
+## Techy details
+*scroodle* is my first practical Python project, in which I have incorporated many standard and third-party libraries. *scroodle* was actually built from my own frustration with the existing system, and solved a problem for at least one person I know of (me!).
+In this section, I'll try to briefly address and explain the main libraries used in the program, and explain what use do they give for *scroodle*.
+
+ - [*RoboBrowser*](https://github.com/jmcarp/robobrowser), a 3rd party library I've found in GitHub. Essentially, RoboBrowser allows to browse the web without a standalone web browser; it is capable of entering pages, filling forms and submitting them, etc. Furthermore, I think it's best ability is how it incorporates the wonderful library [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/); BS allows for "easy" web scraping, which is useful especially in cases where a website does not have a proper API.
 
 ## A new file named my_creds.ini was created! Help!!
 Not to worry; this file saves your preferences, such as desired language and semester, and your username, shall you want it. In the next time the program runs, it won't have to ask for these details.
