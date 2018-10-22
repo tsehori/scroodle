@@ -221,7 +221,7 @@ def main():
                          'Action', 'View']
         df = df[new_col_order]
         df.set_index(['Time'], inplace=True)
-        if PREFERRED_DISPLAY_FULL_URLS == 'y':
+        if PREFERRED_DISPLAY_FULL_URLS == 'n':
             df.drop(['View'], axis=1, inplace=True)
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
@@ -230,8 +230,9 @@ def main():
             # Has to be casted to integer, to be parsed
             # in download_requested_items as slicing index
             num_requested = int(input('How many to view? '
-                                      '(from the newest) 1\\2\\3... :\n'
-                                      'Note that some will be downloaded!'))
+                                      '(from the newest) 1\\2\\3...\n'
+                                      'Note that some will be downloaded!\n'
+                                      'Enter: '))
             download_requested_items(links_series=df['View'],
                                      num_requested=num_requested)
     except KeyboardInterrupt:
