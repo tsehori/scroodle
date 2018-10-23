@@ -222,6 +222,7 @@ def main():
         df = df[new_col_order]
         df.set_index(['Time'], inplace=True)
         if PREFERRED_DISPLAY_FULL_URLS == 'n':
+            saved_urls = df['View']
             df.drop(['View'], axis=1, inplace=True)
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
@@ -233,7 +234,7 @@ def main():
                                       '(from the newest) 1\\2\\3...\n'
                                       'Note that some will be downloaded!\n'
                                       'Enter: '))
-            download_requested_items(links_series=df['View'],
+            download_requested_items(links_series=saved_urls,
                                      num_requested=num_requested)
     except KeyboardInterrupt:
         pass
