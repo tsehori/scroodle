@@ -44,8 +44,8 @@ def get_courses_codes(browser):
             config.SEMESTER_DICT[CURRENT_SEMESTER]
         all_courses_links = [url.get('href') for url in
                              [link.find('a') for link in browser.select(
-                                 ".coc-category-{}".format(
-                                      config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
+                                ".coc-category-{}".format(
+                                     config.SEMESTER_DICT[CURRENT_SEMESTER]))]]
         return [code_in_link.split('=')[1]
                 for code_in_link in all_courses_links]
 
@@ -117,7 +117,7 @@ def download_requested_items(links_series, num_requested):
     """
 
     # links_series.iteritems() returns a zip object of (index, link). This
-    #  is casted to a list, so we can used list slicing.
+    # is casted to a list, so we can used list slicing.
     for index, row in list(links_series.iteritems())[:num_requested]:
         webbrowser.open(row)
 
@@ -158,8 +158,9 @@ def main():
                 input('Do you want to display a full URL address for each '
                       'item? y\\n: '), 'urls')
 
-            # creds_parser['PREFERENCES']['CURRENT_SEMESTER'] = check_legal_input(
-            #     input('What is the current semester? 1\\2\\3: '), 'semester')
+            # creds_parser['PREFERENCES']['CURRENT_SEMESTER'] =
+            #     check_legal_input(input('What is the current semester?
+            #                              1\\2\\3: '), 'semester')
             # There is only one semester in 2019 at the moment. Will be changed
             # by second semester, as there is no solid way to change semesters
             # at the moment.
@@ -167,12 +168,14 @@ def main():
 
             print('Preferred language, current semester (first semester) and '
                   'URL settings are saved in my_creds.ini.')
-            username, creds_parser = ask_for_username(creds_parser=creds_parser)
+            username, creds_parser = ask_for_username(
+                creds_parser=creds_parser)
 
         # If 'CREDENTIALS' section is not in file, then the user asked
         #  the program to not save his username last time
         elif 'CREDENTIALS' not in creds_parser:
-            username, creds_parser = ask_for_username(creds_parser=creds_parser)
+            username, creds_parser = ask_for_username(
+                creds_parser=creds_parser)
 
         # Get username, either from file or input
         else:
@@ -221,9 +224,15 @@ def main():
                          'Action', 'View']
         df = df[new_col_order]
         df.set_index(['Time'], inplace=True)
+
         if PREFERRED_DISPLAY_FULL_URLS == 'n':
+
+            # The URLs have to be saved for later, where the user is asked
+            # whether he wants to download\view the content or not.
             saved_urls = df['View']
             df.drop(['View'], axis=1, inplace=True)
+
+        # Printing the output
         print(tabulate(df, headers='keys', tablefmt='psql'))
 
         if input('Should we view the latest updates online? y\\n: ') == 'y':

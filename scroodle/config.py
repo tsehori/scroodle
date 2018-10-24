@@ -18,4 +18,4 @@ COURSE_MAIN_PAGE = MOODLE_WEBSITE + '{}/course/' \
                    'view.php?id={}'  # Year, Course code
 
 COURSE_NEW_ITEMS_PAGE = MOODLE_WEBSITE + '{}/blocks/' \
-                        'idc_news/full_list.php?courseid={}'
+                        'idc_news/full_list.php?courseid={}'  # Course code
