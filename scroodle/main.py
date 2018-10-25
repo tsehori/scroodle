@@ -213,9 +213,16 @@ def main():
         for course in courses_dict:
             df = add_course_new_info(browser, df, course, courses_dict)
 
-        # Sorting the dataframe by date
-        df['Time'] = pd.to_datetime(df['Time']).apply(
-            lambda date_index: date_index.strftime('%d/%m/%Y'))
+        try:
+            # Sorting the dataframe by date
+            df['Time'] = pd.to_datetime(df['Time']).apply(
+                lambda date_index: date_index.strftime('%d/%m/%Y'))
+        except KeyError:
+            # If the dataframe is empty, then it wouldn't be able to sort the
+            # dataframe. It is probably caused by an invalid password.
+            print('Invalid password!')
+            exit(1)
+
         df['Time'] = pd.to_datetime(df['Time'])
         df.sort_values(by='Time', ascending=False, inplace=True)
 
