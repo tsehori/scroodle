@@ -189,7 +189,8 @@ def main():
         PREFERRED_DISPLAY_FULL_URLS = creds_parser['PREFERENCES']['URLS']
 
         # Get user's password
-        user_password = getpass.getpass('Password for {}: '.format(username))
+        user_password = getpass.getpass('Password for {}: '.format(
+            username.split('.')[0].capitalize()))
 
         print('Working!')
 
